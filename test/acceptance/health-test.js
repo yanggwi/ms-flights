@@ -5,8 +5,6 @@ const server  = require('../support/server');
 const fh      = require("../support/fixture-helper.js");
 const log     = require('metalogger')();
 
-const usersModel = require('users/models/users');
-
 describe('health endpoint', () => {
   let app;
 
@@ -26,9 +24,6 @@ describe('health endpoint', () => {
       .expect(function(response) {
         const payload = response.body;
         assert.equal(payload.status, 'pass');
-        assert.property(payload, "details");
-        assert.property(payload.details, "db:usersQuery");
-        assert.equal(payload.details["db:usersQuery"].metricUnit, 'ms');
       })
       .end(done);
   });  

@@ -26,8 +26,6 @@ ENV HOME_DIR=/opt/app \
 
 ENTRYPOINT ./shell/run-db-migraton.sh && node server.js
 
-
-
 FROM base as build
 
 USER root
@@ -36,3 +34,5 @@ RUN npm install -g nodemon \
  && chown -R node /opt/app
 
 USER node
+
+ENTRYPOINT ./shell/run-db-migraton.sh && node server.js

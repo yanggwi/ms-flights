@@ -2,8 +2,12 @@ version: "3.4"
 
 services:
   ms-nodebootstrap-example:
-    container_name: ms-nodebootstrap-example
-    user: root # avoids ton of volume mounting headaches in dev mode.
+    container_name: ms-flights
+    labels:
+      #- "traefik.backend=ms-flights"
+      - "traefik.enable=true"
+      - "traefik.http.routers.ms-flights.rule=PathPrefix(`/flights`)"
+    user: root
     build:
       context: .
       target: build
@@ -16,7 +20,7 @@ services:
     env_file:
       - ./database.env
     links:
-      - ms-nodebootstrap-example-db
+      - ms-flights-db
     environment:
       - NODE_ENV=dev
       - NODE_HOT_RELOAD=1
@@ -26,10 +30,11 @@ services:
     # command: nodemon -e js,coffee,jade,handlebars server.js
     # @see: https://docs.docker.com/compose/startup-order/
     # command: ["./shell/wait-for.sh", "ms-nodebootstrap-example-db:3306", "--", "./shell/start-dev.sh"]
-    command: ./shell/wait-for.sh ms-nodebootstrap-example-db:3306 -- ./shell/start-dev.sh
+    command: ./shell/wait-for.sh ms-flights-db:3306 -- ./shell/start-dev.sh
 
-  ms-nodebootstrap-example-db:
-    container_name: ms-nodebootstrap-example-db
+  ms-flights-db:
+    container_name: ms-flights-db
+    platform: linux/x86_64
     image: mysql:5.7
     # port mapping not needed for the app, but convenient in debugging
     # to use some GUI tool (e.g. SequelPro) against the DB, on the host
@@ -42,8 +47,8 @@ services:
     env_file:
       - ./database.env
     volumes:
-      - ms_nb_example_db_data:/var/lib/mysql
+      - ms_flights_db_vol:/var/lib/mysql
     restart: always
 
 volumes:
-  ms_nb_example_db_data:
+  ms_flights_db_vol:
